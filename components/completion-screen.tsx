@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react"
 
 interface CompletionScreenProps {
   userId: string
@@ -18,7 +19,7 @@ export default function CompletionScreen({ userId, ratings, onDownload }: Comple
       </div>
       <div className="card-content space-y-4">
         <p className="text-center">
-          Your ratings have been saved as <strong>{filename}</strong>
+          File name: <strong>{filename}</strong>
         </p>
 
         <div

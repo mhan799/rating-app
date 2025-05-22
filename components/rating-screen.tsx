@@ -24,7 +24,7 @@ const generateColor = (index: number) => {
 
 export default function DragRatingScreen({ newsSources, onComplete }: DragRatingScreenProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [canvasSize, setCanvasSize] = useState({ width: 500, height: 500 })
+  const [canvasSize, setCanvasSize] = useState({ width: 900, height: 900 })
   const [positionedSources, setPositionedSources] = useState<PositionedSource[]>([])
   const [draggingSource, setDraggingSource] = useState<string | null>(null)
   const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
@@ -32,7 +32,7 @@ export default function DragRatingScreen({ newsSources, onComplete }: DragRating
   // Handle canvas size on window resize
   useEffect(() => {
     const handleResize = () => {
-      const size = Math.min(window.innerWidth - 40, 500)
+      const size = Math.min(window.innerWidth - 40, 900)
       setCanvasSize({ width: size, height: size })
     }
     handleResize()
@@ -71,22 +71,23 @@ export default function DragRatingScreen({ newsSources, onComplete }: DragRating
 
     // Labels
     ctx.fillStyle = "#000"
-    ctx.font = "16px Arial"
+    ctx.font = "20px Arial"
     ctx.textAlign = "center"
     ctx.fillText("Left", width * 0.25, height / 2 + 30)
     ctx.fillText("Right", width * 0.75, height / 2 + 30)
     ctx.fillText("Bias", width / 2, height - 10)
     ctx.save()
-    ctx.translate(20, height / 2)
+    ctx.translate(30, height / 2)
     ctx.rotate(-Math.PI / 2)
     ctx.fillText("News Value and Reliability", 0, 0)
     ctx.restore()
-    ctx.fillText("More", width / 2 - 30, height * 0.25)
-    ctx.fillText("Less", width / 2 - 30, height * 0.75)
+    ctx.fillText("More", width / 2 - 40, height * 0.25)
+    ctx.fillText("Less", width / 2 - 40, height * 0.75)
 
     // Draw sources
     positionedSources.forEach(({ x, y, source, color }) => {
       const padding = 20
+      ctx.font = "18px Arial"
       const textWidth = ctx.measureText(source).width
       const rectWidth = textWidth + padding
       const rectHeight = 30

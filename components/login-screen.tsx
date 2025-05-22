@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 
 interface LoginScreenProps {
@@ -13,7 +12,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!userId.trim()) {
@@ -25,10 +24,36 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       setError("Password is required")
       return
     }
+    
+    setError("")
 
-    // In a real app, you would validate credentials here
-    // For this demo, we'll just proceed with any non-empty values
-    onLogin(userId)
+    try {
+      const response = await fetch("/api/proxy-check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          code: userId,
+          auth_key: "pgs9ibKWRK",
+          device: "ios"
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data?.status === 200) {
+        onLogin(userId)
+      } else {
+        
+        console.log("Auth response:", data)
+
+        setError(data?.message?.info || "Invalid login credentials")
+        
+      }
+    } catch (err) {
+      setError("Network or server error. Please try again later.")
+    }
   }
 
   return (
