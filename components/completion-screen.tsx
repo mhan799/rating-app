@@ -3,13 +3,14 @@ import { useState } from "react"
 
 interface CompletionScreenProps {
   userId: string
-  ratings: Record<string, { value: number; bias: number }>
   onDownload: () => void
+  message: string
+  status: "success" | "error" | ""
 }
 
-export default function CompletionScreen({ userId, ratings, onDownload }: CompletionScreenProps) {
+export default function CompletionScreen({ userId, message, status, onDownload }: CompletionScreenProps) {
   const date = new Date().toISOString().split("T")[0]
-  const filename = `${userId}_${date}.json`
+  const filename = `${userId}.json`
 
   return (
     <div className="card max-w-md w-full">
@@ -21,23 +22,16 @@ export default function CompletionScreen({ userId, ratings, onDownload }: Comple
         <p className="text-center">
           File name: <strong>{filename}</strong>
         </p>
-
-        <div
-          style={{ border: "1px solid #ddd", borderRadius: "0.375rem", padding: "1rem", backgroundColor: "#f9fafb" }}
-        >
-          <h3 style={{ fontWeight: 500, marginBottom: "0.5rem" }}>Summary of your ratings:</h3>
-          <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-            {Object.entries(ratings).map(([source, { value, bias }]) => (
-              <li key={source} style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.25rem" }}>
-                <span>{source}:</span>
-                <span>
-                  Value: {value.toFixed(2)}, Bias: {bias.toFixed(2)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
+
+        {message && (
+        <div
+          className={`mt-4 text-center font-medium ${status === "success" ? "text-green-600" : "text-red-600"}`}
+        >
+          {status === "success" ? `${message}` : `${message}`}
+        </div>
+      )}
+
       <div className="card-footer gap-4 justify-center">
         <button onClick={() => window.location.reload()} className="btn btn-secondary">
           Start Over

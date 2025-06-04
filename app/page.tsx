@@ -2,17 +2,16 @@
 
 import { useEffect, useState } from "react"
 import LoginScreen from "@/components/login-screen"
-// import RatingScreen from "@/components/rating-screen"
 import DragRatingScreen from "@/components/rating-screen"
-
 import CompletionScreen from "@/components/completion-screen"
 
 export default function Home() {
   const [currentScreen, setCurrentScreen] = useState<"login" | "rating" | "completion">("login")
   const [userId, setUserId] = useState("")
   const [ratings, setRatings] = useState<Record<string, { value: number; bias: number }>>({})
-
   const [newsSources, setNewsSources] = useState<string[]>([])
+  const [message, setMessage] = useState("")
+  const [status, setStatus] = useState<"success" | "error" | "">("")
   
   // Load news sources from file
   useEffect(() => {
@@ -29,29 +28,24 @@ export default function Home() {
 
   const handleRatingComplete = (newRatings: Record<string, { value: number; bias: number }>) => {
     setRatings(newRatings)
-
-    const date = new Date().toISOString().split("T")[0]
-    const filename = `${userId}_${date}.json`
-
-    setRatings(newRatings)
     setCurrentScreen("completion")
 
   }
 
   const handleDownloadAndSave = async () => {
-    const date = new Date().toISOString().split("T")[0]
-    const filename = `${userId}_${date}.json`
+    const filename = `${userId}.json`
 
-    const jsonData = JSON.stringify(ratings, null, 2)
-    const blob = new Blob([jsonData], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    URL.revokeObjectURL(url)
-    document.body.removeChild(a)
+    // Browser download
+    // const jsonData = JSON.stringify(ratings, null, 2)
+    // const blob = new Blob([jsonData], { type: "application/json" })
+    // const url = URL.createObjectURL(blob)
+    // const a = document.createElement("a")
+    // a.href = url
+    // a.download = filename
+    // document.body.appendChild(a)
+    // a.click()
+    // URL.revokeObjectURL(url)
+    // document.body.removeChild(a)
 
     try {
       const response = await fetch("/api/saveResult", {
@@ -61,13 +55,16 @@ export default function Home() {
       })
 
       if (response.ok) {
-        alert("✅ Successfully downloaded results!")
+        setMessage("✅ Successfully downloaded results!")
+        setStatus("success")
       } else {
         const data = await response.json()
-        alert("❌ Server error: " + (data?.message || "Unable to save."))
+        setMessage("❌ Server error: " + (data?.message || "Unable to save."))
+        setStatus("error")
       }
     } catch (err) {
-      alert("❌ Network error while saving to server.")
+      setMessage("❌ Network error while saving to server.")
+      setStatus("error")
     }
   }
 
@@ -85,7 +82,8 @@ export default function Home() {
       {currentScreen === "completion" && (
         <CompletionScreen
           userId={userId}
-          ratings={ratings}
+          message={message}
+          status={status}
           onDownload={handleDownloadAndSave}
         />
       )}

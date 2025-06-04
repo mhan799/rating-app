@@ -24,10 +24,22 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       setError("Password is required")
       return
     }
-    
+
+    if (password !== "Connect123") {
+      setError("Incorrect password")
+      return
+    }
+
     setError("")
 
     try {
+      const keyRes = await fetch("/auth_key.txt")
+      if (!keyRes.ok) throw new Error("Auth key file not found");
+      const authKey = (await keyRes.text()).trim();
+      // if (!keyData.auth_key) {
+      //   setError("Could not retrieve authentication key")
+      //   return
+      // }
       const response = await fetch("/api/proxy-check", {
         method: "POST",
         headers: {
@@ -35,7 +47,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         },
         body: JSON.stringify({
           code: userId,
-          auth_key: "pgs9ibKWRK",
+          auth_key: authKey,
           device: "ios"
         })
       })
@@ -43,7 +55,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       const data = await response.json()
 
       if (response.ok && data?.status === 200) {
-        onLogin(userId)
+        const uid = data?.message?.uid
+        onLogin(uid)
       } else {
         
         console.log("Auth response:", data)
