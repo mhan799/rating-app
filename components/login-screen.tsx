@@ -15,38 +15,22 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!userId.trim()) {
-      setError("User ID is required")
+    if (!userId.trim() || !password.trim()) {
+      setError("Both fields are required")
       return
     }
-
-    if (!password.trim()) {
-      setError("Password is required")
-      return
-    }
-
-    if (password !== "Connect123") {
-      setError("Incorrect password")
-      return
-    }
-
-    setError("")
 
     try {
       const keyRes = await fetch("/auth_key.txt")
       if (!keyRes.ok) throw new Error("Auth key file not found");
       const authKey = (await keyRes.text()).trim();
-      // if (!keyData.auth_key) {
-      //   setError("Could not retrieve authentication key")
-      //   return
-      // }
       const response = await fetch("/api/proxy-check", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          code: userId,
+          code: password,
           auth_key: authKey,
           device: "ios"
         })
@@ -55,8 +39,12 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       const data = await response.json()
 
       if (response.ok && data?.status === 200) {
-        const uid = data?.message?.uid
-        onLogin(uid)
+        const returnedUid = data?.message?.uid?.trim()
+        if (returnedUid === userId.trim()) {
+          onLogin(returnedUid)
+        } else {
+          setError("User ID does not match the credentials.")
+        }
       } else {
         
         console.log("Auth response:", data)
@@ -65,7 +53,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         
       }
     } catch (err) {
-      setError("Network or server error. Please try again later.")
+      setError("Network or server error. Please try again.")
     }
   }
 
