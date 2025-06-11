@@ -32,8 +32,9 @@ export default function DragRatingScreen({ newsSources, onComplete }: DragRating
   // Handle canvas size on window resize
   useEffect(() => {
     const handleResize = () => {
-      const size = Math.min(window.innerWidth - 40, 900)
-      setCanvasSize({ width: size, height: size })
+      const width = Math.min(window.innerWidth * 0.9, 800)
+      const height = Math.min(window.innerHeight * 0.7, 600)
+      setCanvasSize({ width, height })
     }
     handleResize()
     window.addEventListener("resize", handleResize)

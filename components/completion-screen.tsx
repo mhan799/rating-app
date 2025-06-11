@@ -1,27 +1,48 @@
 "use client"
-import { useState } from "react"
+import { useEffect } from "react"
 
 interface CompletionScreenProps {
   userId: string
-  onDownload: () => void
+  ratings: Record<string, { value: number; bias: number }>
   message: string
   status: "success" | "error" | ""
 }
 
-export default function CompletionScreen({ userId, message, status, onDownload }: CompletionScreenProps) {
-  const date = new Date().toISOString().split("T")[0]
-  const filename = `${userId}.json`
+export default function CompletionScreen({ userId, ratings, message, status }: CompletionScreenProps) {
+  useEffect(() => {
+    const uploadData = async () => {
+      try {
+        const response = await fetch("/api/upload-news", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            uid: userId,
+            data: ratings
+          })
+        })
+
+        if (response.ok) {
+          const res = await response.json()
+          console.log("✅ Upload successful", res)
+        } else {
+          const err = await response.json()
+          console.error("❌ Upload failed:", err)
+        }
+      } catch (err) {
+        console.error("❌ Network error while uploading to server.", err)
+      }
+    }
+
+    uploadData()
+  }, [userId, ratings])
 
   return (
     <div className="card max-w-md w-full">
       <div className="card-header">
         <h2 className="card-title text-center">Thank You!</h2>
         <p className="card-description text-center">You have successfully completed rating all news sources.</p>
-      </div>
-      <div className="card-content space-y-4">
-        <p className="text-center">
-          File name: <strong>{filename}</strong>
-        </p>
       </div>
 
         {message && (
@@ -35,9 +56,6 @@ export default function CompletionScreen({ userId, message, status, onDownload }
       <div className="card-footer gap-4 justify-center">
         <button onClick={() => window.location.reload()} className="btn btn-secondary">
           Start Over
-        </button>
-        <button onClick={onDownload} className="btn btn-primary">
-          Download Results
         </button>
       </div>
     </div>

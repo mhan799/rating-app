@@ -29,43 +29,6 @@ export default function Home() {
   const handleRatingComplete = (newRatings: Record<string, { value: number; bias: number }>) => {
     setRatings(newRatings)
     setCurrentScreen("completion")
-
-  }
-
-  const handleDownloadAndSave = async () => {
-    const filename = `${userId}.json`
-
-    // Browser download
-    // const jsonData = JSON.stringify(ratings, null, 2)
-    // const blob = new Blob([jsonData], { type: "application/json" })
-    // const url = URL.createObjectURL(blob)
-    // const a = document.createElement("a")
-    // a.href = url
-    // a.download = filename
-    // document.body.appendChild(a)
-    // a.click()
-    // URL.revokeObjectURL(url)
-    // document.body.removeChild(a)
-
-    try {
-      const response = await fetch("/api/saveResult", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, filename, ratings })
-      })
-
-      if (response.ok) {
-        setMessage("✅ Successfully downloaded results!")
-        setStatus("success")
-      } else {
-        const data = await response.json()
-        setMessage("❌ Server error: " + (data?.message || "Unable to save."))
-        setStatus("error")
-      }
-    } catch (err) {
-      setMessage("❌ Network error while saving to server.")
-      setStatus("error")
-    }
   }
 
   return (
@@ -82,9 +45,9 @@ export default function Home() {
       {currentScreen === "completion" && (
         <CompletionScreen
           userId={userId}
+          ratings={ratings}
           message={message}
           status={status}
-          onDownload={handleDownloadAndSave}
         />
       )}
     </main>
