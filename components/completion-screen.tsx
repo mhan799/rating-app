@@ -1,5 +1,5 @@
 "use client"
-import { useEffect } from "react"
+import { useRef, useEffect } from "react"
 
 interface CompletionScreenProps {
   userId: string
@@ -9,8 +9,13 @@ interface CompletionScreenProps {
 }
 
 export default function CompletionScreen({ userId, ratings, message, status }: CompletionScreenProps) {
+  const hasUploadedRef = useRef(false)
   useEffect(() => {
+
     const uploadData = async () => {
+      if (hasUploadedRef.current) return
+      hasUploadedRef.current = true
+
       try {
         const response = await fetch("/api/upload-news", {
           method: "POST",

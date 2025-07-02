@@ -9,16 +9,28 @@ export default function Home() {
   const [currentScreen, setCurrentScreen] = useState<"login" | "rating" | "completion">("login")
   const [userId, setUserId] = useState("")
   const [ratings, setRatings] = useState<Record<string, { value: number; bias: number }>>({})
-  const [newsSources, setNewsSources] = useState<string[]>([])
+  const [newsSources, setNewsSources] = useState<string[]>([
+    "CNN",
+    "Fox News",
+    "MSNBC",
+    "BBC",
+    "The New York Times",
+    "The Wall Street Journal",
+    "NPR",
+    "Breitbart",
+    "The Guardian",
+    "Reuters"
+  ])
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState<"success" | "error" | "">("")
+
   
   // Load news sources from file
-  useEffect(() => {
-    fetch("/news_sources.txt")
-      .then((res) => res.text())
-      .then((text) => setNewsSources(text.split("\n").filter(Boolean)))
-  }, [])
+  // useEffect(() => {
+  //   fetch("/news_sources.txt")
+  //     .then((res) => res.text())
+  //     .then((text) => setNewsSources(text.split("\n").filter(Boolean)))
+  // }, [])
 
 
   const handleLogin = (id: string) => {

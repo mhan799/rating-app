@@ -21,9 +21,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     }
 
     try {
-      const keyRes = await fetch("/auth_key.txt")
-      if (!keyRes.ok) throw new Error("Auth key file not found");
-      const authKey = (await keyRes.text()).trim();
+      const authKey = "pgs9ibKWRK"
       const response = await fetch("/api/proxy-check", {
         method: "POST",
         headers: {
