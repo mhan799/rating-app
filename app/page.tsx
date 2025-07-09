@@ -60,6 +60,8 @@ export default function Home() {
           ratings={ratings}
           message={message}
           status={status}
+          setMessage={setMessage}
+          setStatus={setStatus}
         />
       )}
     </main>
