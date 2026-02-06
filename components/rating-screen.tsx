@@ -70,18 +70,12 @@ export default function DragRatingScreen({ newsSources, onComplete }: DragRating
     ctx.lineTo(width / 2, height)
     ctx.stroke()
 
-    // Labels
+    // Labels (removed from canvas - will be positioned outside via HTML)
     ctx.fillStyle = "#000"
-    ctx.font = "20px Arial"
+    ctx.font = "16px Arial"
     ctx.textAlign = "center"
-    ctx.fillText("Left", width * 0.25, height / 2 + 30)
-    ctx.fillText("Right", width * 0.75, height / 2 + 30)
-    ctx.fillText("Bias", width / 2, height - 10)
-    ctx.save()
-    ctx.translate(30, height / 2)
-    ctx.rotate(-Math.PI / 2)
-    ctx.fillText("News Value and Reliability", 0, 0)
-    ctx.restore()
+    ctx.fillText("Left", width * 0.25, height / 2 + 25)
+    ctx.fillText("Right", width * 0.75, height / 2 + 25)
     ctx.fillText("More", width / 2 - 40, height * 0.25)
     ctx.fillText("Less", width / 2 - 40, height * 0.75)
 
@@ -211,17 +205,40 @@ export default function DragRatingScreen({ newsSources, onComplete }: DragRating
         )}
       </div>
 
-      <canvas
-        ref={canvasRef}
-        width={canvasSize.width}
-        height={canvasSize.height}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}
-        style={{ border: "1px solid #ddd", cursor: "crosshair" }}
-      />
+      <div className="flex items-center gap-4">
+        {/* Y-axis label - positioned to the left of canvas */}
+        <div className="flex-shrink-0 flex items-center justify-center" style={{ height: canvasSize.height }}>
+          <div 
+            className="text-lg font-semibold"
+            style={{ 
+              transform: "rotate(-90deg)",
+              transformOrigin: "center",
+              whiteSpace: "nowrap"
+            }}
+          >
+            Reliable or Trustworthy
+          </div>
+        </div>
+        
+        <div className="flex flex-col items-center gap-4">
+          <canvas
+            ref={canvasRef}
+            width={canvasSize.width}
+            height={canvasSize.height}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+            style={{ border: "1px solid #ddd", cursor: "crosshair" }}
+          />
+          
+          {/* X-axis label - positioned below canvas */}
+          <div className="text-lg font-semibold">
+            Political Leaning
+          </div>
+        </div>
+      </div>
 
       <button
         onClick={handleComplete}
