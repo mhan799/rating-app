@@ -4,11 +4,11 @@ import type React from "react"
 import { useState } from "react"
 
 interface InstructionsScreenProps {
-  topSources: string[]
+  existingSources: string[]
   onContinue: (additionalSources: string[]) => void
 }
 
-export default function InstructionsScreen({ topSources, onContinue }: InstructionsScreenProps) {
+export default function InstructionsScreen({ existingSources, onContinue }: InstructionsScreenProps) {
   const [additionalSources, setAdditionalSources] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -32,9 +32,9 @@ export default function InstructionsScreen({ topSources, onContinue }: Instructi
         </p>
         
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Top News Sources:</h3>
+          <h3 className="text-lg font-semibold mb-3">News Sources:</h3>
           <ul className="list-disc list-inside space-y-1">
-            {topSources.map((source, index) => (
+            {existingSources.map((source, index) => (
               <li key={index} className="text-base">{source}</li>
             ))}
           </ul>

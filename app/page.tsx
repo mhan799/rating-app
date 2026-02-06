@@ -62,7 +62,7 @@ export default function Home() {
 
       {currentScreen === "instructions" && (
         <InstructionsScreen 
-          topSources={newsSources.slice(0, 3)}
+          existingSources={newsSources}
           onContinue={handleInstructionsContinue} 
         />
       )}
