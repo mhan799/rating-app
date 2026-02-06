@@ -39,7 +39,15 @@ export default function Home() {
     setCurrentScreen("instructions")
   }
 
-  const handleInstructionsContinue = () => {
+  const handleInstructionsContinue = (additionalSources: string[]) => {
+    // Merge additional sources with existing sources, avoiding duplicates
+    const allSources = [...newsSources]
+    additionalSources.forEach(source => {
+      if (!allSources.includes(source)) {
+        allSources.push(source)
+      }
+    })
+    setNewsSources(allSources)
     setCurrentScreen("rating")
   }
 
@@ -53,7 +61,10 @@ export default function Home() {
       {currentScreen === "login" && <LoginScreen onLogin={handleLogin} />}
 
       {currentScreen === "instructions" && (
-        <InstructionsScreen onContinue={handleInstructionsContinue} />
+        <InstructionsScreen 
+          topSources={newsSources.slice(0, 3)}
+          onContinue={handleInstructionsContinue} 
+        />
       )}
 
       {currentScreen === "rating" && newsSources.length > 0 && (
